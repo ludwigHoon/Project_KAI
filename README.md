@@ -16,7 +16,7 @@
     message = messages.GetLast()
     body_content = message.body
     print(body_content)
-        ```
+    ```
     - Potentially the same thing can be done for calendar stored in outlook, user can login with other email providers, should be platform-independent enough.
 ---
 
