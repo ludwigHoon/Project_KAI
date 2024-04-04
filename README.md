@@ -3,7 +3,8 @@
 
 - Potentially-reusable:
     - https://github.com/raydelvecchio/vlite-v2/blob/master/vlite2/ingestors.py
-    - https://github.com/weaviate/Verba 
+    - https://github.com/weaviate/Verba  <--- reusing
+    - https://www.sbert.net/examples/applications/computing-embeddings/README.html 
     - calendar stuff, haven't read too closely: https://www.nearform.com/insights/using-google-calendar-with-natural-language-via-langchain/
     - This can get email from outlook, asssume user signed in and stuff, I'd rather use this and not have to worry about syncing, syncing should be handled by outlook.
     ```python
@@ -21,7 +22,12 @@
 ---
 
 ## Interesting resources:
-- dspy + qdrant, maybe to use it to test which llm is better for the rag tasks: https://qdrant.tech/documentation/frameworks/dspy/
 - IDK how NPU work yet, but potentially split it between CPU and NPU: https://huggingface.co/blog/accelerate-large-models
 - Unknown if the `from modeling_llama_amd import LlamaForCausalLM, LlamaAttention` are limited to LLAMA2 architecture, if not, other awq models may be used: https://huggingface.co/TheBloke?search_models=awq&sort_models=created#models
 - If only the specific architecture and not all awq quantised models were supported, may have to quantise and convert to ONNX format with vitis quantisation tool: https://ryzenai.docs.amd.com/en/latest/vai_quant/vai_q_onnx.html but may have to check if the resulting models have incompatible operators, because not all were supported?!: https://ryzenai.docs.amd.com/en/latest/modelcompat.html
+- https://onnxruntime.ai/docs/execution-providers/Vitis-AI-ExecutionProvider.html
+- https://huggingface.co/docs/transformers/main/en/quantization?fuse=supported+architectures
+
+#### Activeloop Deep Memory
+RAG Database for AI? https://github.com/activeloopai/deeplake/tree/main
+tutorial from langchain: https://python.langchain.com/docs/integrations/retrievers/activeloop
