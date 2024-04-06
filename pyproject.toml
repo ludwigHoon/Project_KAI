@@ -9,7 +9,7 @@ readme = "README.md"
 python = ">=3.10,<3.13"
 fastapi = "^0.110.0"
 torch = "^2.2.2"
-transformers = "^4.39.2"
+transformers = {extras = ["torch"], version = "^4.39.3"}
 uvicorn = "^0.29.0"
 click = "^8.1.7"
 pypdf = "^4.1.0"
