@@ -3,7 +3,8 @@ import sys
 import chromadb
 import tiktoken
 from loguru import logger
-from setting import PERSISTANT_PATH
+
+from .setting import PERSISTANT_PATH
 
 logger.add(sys.stdout, colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
@@ -19,7 +20,7 @@ def add_chunk_text_to_db_with_meta(text: str, meta: dict) -> bool:
         logger.error("Document ID is missing")
         return(False)
 
-    collection = client.get_or_create_collection(name="KAI")
+    collection = client.get_or_create_collection(name="KAI", metadata={"hnsw:space": "cosine"})
     collection.upsert(
         documents = chunks,
         metadatas = [meta for i in range(len(chunks))],
@@ -59,3 +60,4 @@ def chunk_text(text: str, units: int = 256, overlap: int = 50) -> list[str]:
         chunks.append(chunk_text)
         i += units - overlap
     return(chunks)
+

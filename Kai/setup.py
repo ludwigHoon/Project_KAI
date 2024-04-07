@@ -2,7 +2,8 @@ import os
 import shutil
 
 import chromadb
-from setting import PERSISTANT_PATH
+
+from .setting import PERSISTANT_PATH
 
 
 def setup_application():
