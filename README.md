@@ -1,4 +1,6 @@
 # Project details
+- To-do: Change embedding to this model: multi-qa-MiniLM-L6-cos-v1 (https://www.sbert.net/docs/pretrained_models.html) 
+- https://weaviate.io/blog/cross-encoders-as-reranker <-- maybe implement reranker
 - To-do: swap the pytorch and transformer to this: https://github.com/amd/RyzenAI-SW/blob/main/example/transformers/README.md
 
 - Potentially-reusable:

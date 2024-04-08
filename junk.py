@@ -13,3 +13,12 @@ device = "cuda" # the device to load the model onto; AMD NPU seems to be "aie" <
 model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+
+encodeds = tokenizer(
+    prompt_template,
+    return_tensors='pt'
+).input_ids.cuda()
+
+model.to(device)
+# Generate output
+generation_output = model.generate(encodeds, streamer=streamer, max_new_tokens=1000, do_sample=True)
