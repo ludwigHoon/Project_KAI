@@ -20,6 +20,9 @@ tiktoken = "^0.6.0"
 wikipedia = "^1.4.0"
 tqdm = "^4.66.2"
 gradio = "^4.25.0"
+google-api-python-client = "^2.127.0"
+google-auth-httplib2 = "^0.2.0"
+google-auth-oauthlib = "^1.2.0"
 
 [[tool.poetry.source]]
 name = "pytorch-gpu-src"
