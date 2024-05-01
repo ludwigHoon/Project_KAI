@@ -29,7 +29,7 @@ Quick start with (Goolge Calendar Python API)[https://developers.google.com/cale
 #### Sample code from Google
 1. At <code>./google_calendar</code>, run <code>python quick_start.py</code>
 2. A web broswer will prompt, select a Google account to sign in and agree access to calendar.
-3. At the terminal, the python script will query upcomig 10 events
+3. At the terminal, the python script will query upcoming 10 events
 
 
 ## Interesting resources:
