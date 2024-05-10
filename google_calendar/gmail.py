@@ -38,6 +38,7 @@ def main():
     # Call the Gmail API
     service = build("gmail", "v1", credentials=creds)
     results = service.users().labels().list(userId="me").execute()
+    print(results)
     labels = results.get("labels", [])
 
     if not labels:
