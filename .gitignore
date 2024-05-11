@@ -3,3 +3,4 @@ __pycache__/
 data/**/*
 test_config.json
 google_calendar/token.json
+google_calendar/sample_contact.json

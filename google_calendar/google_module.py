@@ -1,5 +1,6 @@
 # Self developed Google Gmail and Calender APIs
 from datetime import datetime, time
+import json
 import os.path
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -9,7 +10,9 @@ from googleapiclient.errors import HttpError
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly",
-            "https://www.googleapis.com/auth/calendar.readonly"]
+            "https://www.googleapis.com/auth/calendar.readonly",
+            "https://www.googleapis.com/auth/contacts.readonly",
+            "https://www.googleapis.com/auth/contacts.readonly"]
         
 TOKEN_FILE = "token.json"
 CRED_FILE = "credentials.json"
@@ -33,7 +36,8 @@ class Google_api:
         # If there are no (valid) credentials available, let the user log in.
         if not self._creds or not self._creds.valid:
             if self._creds and self._creds.expired and self._creds.refresh_token:
-                os.remove(TOKEN_FILE)
+                #os.remove(TOKEN_FILE)
+                print("Refresh token")
                 self._creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
@@ -87,15 +91,34 @@ class Google_api:
         
         return events_result
     
+    def construct_event_metadata_and_text(events_result):
+        """_summary_
+
+        Args:
+            events_result (_type_): _description_
+
+        Returns:
+            dict: event meta
+            text: event description
+        """
+
+        meta = dict()
+        description = ""
+        
+        
+        
+        return meta, description
+        
+    
         
 #sample usage:
 
-# a = Google_api()
-# a.Get_Calender()
-# events_result = a.Get_today_events()
+a = Google_api()
+a.Get_Calender()
+events_result = a.Get_today_events()
 
-# print(events_result)
-# events = events_result.get("items", [])
-# for event in events:
-#     start = event["start"].get("dateTime", event["start"].get("date"))
-#     print(start, event["summary"])
+events = events_result.get("items", [])
+print(events)
+for event in events:
+    start = event["start"].get("dateTime", event["start"].get("date"))
+    print(start, event["summary"])
