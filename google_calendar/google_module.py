@@ -22,6 +22,7 @@ class Google_api:
     def __init__(self) -> None:
         self._creds = None
         self._calendar_service = None
+        self._people_service = None
 
     def Authenticate(self):
         """Shows basic usage of the Google Calendar API.
@@ -59,9 +60,9 @@ class Google_api:
         if not self._calendar_service:
             try:
                 self._calendar_service = build("calendar", "v3", credentials=self._creds)
+                self._people_service  = build("people", "v1", credentials=self._creds)
             except HttpError as error:
                 print(f"An error occurred: {error}")
-        return self._calendar_service
     
     def Get_today_events(self) :
         """_summary_
@@ -91,23 +92,71 @@ class Google_api:
         
         return events_result
     
-    def construct_event_metadata_and_text(events_result):
-        """_summary_
+    def Get_attendee_name(self, email:str):
+        if not self._people_service:
+            self.Get_Calender()
+        person_details = (
+            self._people_service.people().
+                searchContacts(query=email, readMask="locations,metadata,names,nicknames,phoneNumbers,relations")
+                .execute()
+        )
+        print("\ndetails: ",email,person_details)
+        contacts_details = person_details.get('results')
+        if(contacts_details and len(contacts_details)>=1):
+            print("\n1st: ",contacts_details[0])
+            return True, contacts_details[0].get('person')
+        else:
+            return  False, email
+    
+    def construct_event_metadata(self, event):
+        """Contruct a single Google Event Dict to a Meta and base info
 
         Args:
-            events_result (_type_): _description_
+            events_result (Google Event Dict): _description_
 
         Returns:
-            dict: event meta
-            text: event description
+            str: event name
+            str: event description
+            dic: Meta data
         """
 
         meta = dict()
-        description = ""
+        eventName:str = ""
+        note:str = ""
         
+        if(event):
+            #Meta constrcutions
+            start = event.get("start").get("dateTime", event.get("start").get("date"))
+            end   = event.get("end").get("dateTime", event.get("end").get("date"))
+            location = event.get("location") if event.get("location") else "Not Defined"
+            attendees = []
+            
+            for attendee in event.get("attendees"):
+                #if not attendee.get('self'):
+                email = attendee.get('email')
+                res, details = a.Get_attendee_name(email)
+                if res:
+                    print(details.get("names"))
+                    person = details.get("names")[0].get("displayName")  + "<"+email+">"
+                    attendees.append(person)
+                else:
+                    attendees.append( "<"+email+">")
+                    
+            meta["start"] = start
+            meta["end"] = end
+            meta["location"] = location
+            meta["attendees"] = attendees
+            
+            #get title and descriptiopn
+            eventName = event.get("summary")
+            note = event.get("description")
+
+            
+            return eventName, note, meta
+        else:
+            return None,None,None
+
         
-        
-        return meta, description
         
     
         
@@ -122,3 +171,13 @@ print(events)
 for event in events:
     start = event["start"].get("dateTime", event["start"].get("date"))
     print(start, event["summary"])
+    print(event["location"])
+    print(event["attendees"])
+    # for attendee in event.get("attendees"):
+    #     if not attendee.get('self'):
+    #         res, details = a.Get_attendee_name(attendee.get('email'))
+    #         if res:
+    #             print(details)
+    name, note, meta = a.construct_event_metadata(event)
+    print(name, note, meta)
+    

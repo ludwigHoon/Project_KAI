@@ -22,7 +22,7 @@
 # Note:
 ```
 - start time, end time, location, attendees --- metadata
-
+- **Done** in Google Calender, see google_module.py, uncomment sample usage and run
 
 
 ## Demo(s) 
