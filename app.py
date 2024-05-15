@@ -1,6 +1,7 @@
 import gradio as gr
 
 from Kai.answer import format_prompt_for_llama2chat, generate_response_amd, query_db_for_context
+from Kai.search import search_and_add_to_db
 
 
 def respond(message, chat_history, query_db):
@@ -21,5 +22,7 @@ def respond(message, chat_history, query_db):
 demo = gr.ChatInterface(respond,
     additional_inputs = [
         gr.Checkbox(label="Query vector DB", value=True)]).queue()
+
+search_and_add_to_db("intc")
 
 demo.launch()

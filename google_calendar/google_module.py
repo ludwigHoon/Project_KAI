@@ -1,5 +1,6 @@
 # Self developed Google Gmail and Calender APIs
-from datetime import datetime, time
+import base64
+import datetime
 import json
 import os.path
 from google.auth.transport.requests import Request
@@ -13,9 +14,11 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.readonly",
             "https://www.googleapis.com/auth/calendar.readonly",
             "https://www.googleapis.com/auth/contacts.readonly",
             "https://www.googleapis.com/auth/contacts.readonly"]
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
         
-TOKEN_FILE = "token.json"
-CRED_FILE = "credentials.json"
+TOKEN_FILE = SCRIPT_DIR+"/token.json"
+CRED_FILE = SCRIPT_DIR+"/credentials.json"
 
 class Google_api:
 
@@ -23,6 +26,7 @@ class Google_api:
         self._creds = None
         self._calendar_service = None
         self._people_service = None
+        self._email_service = None
 
     def Authenticate(self):
         """Shows basic usage of the Google Calendar API.
@@ -61,6 +65,7 @@ class Google_api:
             try:
                 self._calendar_service = build("calendar", "v3", credentials=self._creds)
                 self._people_service  = build("people", "v1", credentials=self._creds)
+                self._email_service = build('gmail', 'v1', credentials=self._creds)
             except HttpError as error:
                 print(f"An error occurred: {error}")
     
@@ -74,8 +79,8 @@ class Google_api:
         if not self._calendar_service:
             self.Get_Calender()
         
-        now = datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
-        end_of_day = datetime.combine(datetime.now(), time.max).isoformat() + "Z"
+        now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
+        end_of_day = datetime.datetime.combine(datetime.datetime.now(), datetime.time.max).isoformat() + "Z"
         
         events_result = (
         self._calendar_service.events()
@@ -126,8 +131,8 @@ class Google_api:
         
         if(event):
             #Meta constrcutions
-            start = event.get("start").get("dateTime", event.get("start").get("date"))
-            end   = event.get("end").get("dateTime", event.get("end").get("date"))
+            start = event.get("start").get("datetime.datetime", event.get("start").get("date"))
+            end   = event.get("end").get("datetime.datetime", event.get("end").get("date"))
             location = event.get("location") if event.get("location") else "Not Defined"
             attendees = []
             
@@ -156,28 +161,68 @@ class Google_api:
         else:
             return None,None,None
 
+    def get_unread_emails(self):
+        """Get all unread email from yesterday to now
+        """
+        # Calculate the time range
+        now = datetime.datetime.utcnow()
+        yesterday = now - datetime.timedelta(days=1)
+        query = f'is:unread after:{yesterday.strftime("%Y/%m/%d")} before:{now.strftime("%Y/%m/%d")}'
         
+        # Get the unread emails within the specified range
+        results = self._email_service.users().messages().list(userId='me', q=query).execute()
+        messages = results.get('messages', [])
         
-    
+        messages_meta = []
+        if not messages:
+            print('No new unread messages found.')
+        else:
+            for message in messages:
+                # msg =  self._email_service.users().messages().get(userId='me', id=message['id'], format='full').execute()
+                # headers = msg['payload']['headers']
+                # subject = next(header['value'] for header in headers if header['name'] == 'Subject')
+                # parts = msg['payload']['parts']
+                
+                # body = ""
+                # for part in parts:
+                #     if part['mimeType'] == 'text/plain':
+                #         body = base64.urlsafe_b64decode(part['body']['data']).decode('utf-8')
+                #         break
+                
+                # print(f"Subject: {subject}")
+                # print(f"Body: {body}")
+                
+                ######## GET SNIPPET content - avoid junk info(eg css + links + footer)
+                msg = self._email_service.users().messages().get(userId='me', id=message['id'], format='metadata', metadataHeaders=['Subject', 'Date']).execute()
+                headers = msg['payload']['headers']
+                subject = next(header['value'] for header in headers if header['name'] == 'Subject')
+                date = next(header['value'] for header in headers if header['name'] == 'Date')
+                snippet = msg['snippet']
+                messages_meta.append({"date":date,"subject": subject, "content":snippet})
+
+        return messages_meta
         
 #sample usage:
 
-a = Google_api()
-a.Get_Calender()
-events_result = a.Get_today_events()
+# a = Google_api()
+# a.Get_Calender()
+# events_result = a.Get_today_events()
 
-events = events_result.get("items", [])
-print(events)
-for event in events:
-    start = event["start"].get("dateTime", event["start"].get("date"))
-    print(start, event["summary"])
-    print(event["location"])
-    print(event["attendees"])
-    # for attendee in event.get("attendees"):
-    #     if not attendee.get('self'):
-    #         res, details = a.Get_attendee_name(attendee.get('email'))
-    #         if res:
-    #             print(details)
-    name, note, meta = a.construct_event_metadata(event)
-    print(name, note, meta)
+# events = events_result.get("items", [])
+# print(events)
+# for event in events:
+#     start = event["start"].get("datetime.datetime", event["start"].get("date"))
+#     print(start, event["summary"])
+#     print(event["location"])
+#     print(event["attendees"])
+#     # for attendee in event.get("attendees"):
+#     #     if not attendee.get('self'):
+#     #         res, details = a.Get_attendee_name(attendee.get('email'))
+#     #         if res:
+#     #             print(details)
+#     name, note, meta = a.construct_event_metadata(event)
+#     print(name, note, meta)
+    
+# msgs = a.get_unread_emails()
+# print(msgs)
     
