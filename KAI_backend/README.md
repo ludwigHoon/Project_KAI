@@ -14,3 +14,4 @@
     setup.bat
     pip install ops\cpp --force-reinstall
     ```
+5. Start the background service with: `python -m uvicorn main:app` (available at: 127.0.0.1:8000)

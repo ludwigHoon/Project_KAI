@@ -62,6 +62,4 @@ def run_model():
             m.quantize_weights()
 
     prompt = "Translate the following English sentence to French: 'Hello, how are you?'"
-    inputs = tokenizer(prompt, return_tensors="pt")
-    outputs = model.generate(**inputs, max_length=128)
-    print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+    return(model, tokenizer)
