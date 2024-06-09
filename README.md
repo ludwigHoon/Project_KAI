@@ -23,6 +23,15 @@
     - Potentially the same thing can be done for calendar stored in outlook, user can login with other email providers, should be platform-independent enough.
 ---
 
+## Calendar APIs
+### Google Calendar
+Quick start with (Goolge Calendar Python API)[https://developers.google.com/calendar/api/quickstart/python]
+#### Sample code from Google
+1. At <code>./google_calendar</code>, run <code>python quick_start.py</code>
+2. A web broswer will prompt, select a Google account to sign in and agree access to calendar.
+3. At the terminal, the python script will query upcoming 10 events
+
+
 ## Interesting resources:
 - IDK how NPU work yet, but potentially split it between CPU and NPU: https://huggingface.co/blog/accelerate-large-models
 - Unknown if the `from modeling_llama_amd import LlamaForCausalLM, LlamaAttention` are limited to LLAMA2 architecture, if not, other awq models may be used: https://huggingface.co/TheBloke?search_models=awq&sort_models=created#models

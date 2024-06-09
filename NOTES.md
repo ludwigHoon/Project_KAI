@@ -8,6 +8,7 @@
 # Other integrations
 1. ActivityWatch for productivity, use the data they provide instead of https://activitywatch.net/
 2. Thunderbird, maybe use this: https://wiki.bitplan.com/index.php/PyThunderbird instead of outlook, since only the old outlook (which is not free anyhow) has COM API exposed, https://kb.mozillazine.org/Files_and_folders_in_the_profile_-_Thunderbird (for reading) pythunderbird 
+    - found Google gmail and calander API is easily accessible. Use Google instead
 
 ```markdown
 # Email title: 
@@ -21,7 +22,7 @@
 # Note:
 ```
 - start time, end time, location, attendees --- metadata
-
+- **Done** in Google Calender, see google_module.py, uncomment sample usage and run
 
 
 ## Demo(s) 

@@ -11,3 +11,6 @@ KAI_backend/ext
 KAI_backend/onnx-ops
 KAI_backend/ops
 KAI_backend/dll
+
+google_calendar/token.json
+google_calendar/sample_contact.json
