@@ -3,3 +3,11 @@ __pycache__/
 data/**/*
 test_config.json
 
+KAI_backend/third_party
+KAI_backend/tools
+KAI_backend/xclbin
+KAI_backend/ckpt
+KAI_backend/ext
+KAI_backend/onnx-ops
+KAI_backend/ops
+KAI_backend/dll
