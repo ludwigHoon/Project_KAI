@@ -18,6 +18,7 @@ AWQ_FILE = "llama3-instruct-8b-w4-g128.pt" # "llama-2-7b-chat-w4-g128.pt" #
 ckpt_folder = "ckpt/"
 ckpt = ckpt_folder + "llama3-instruct-8b-w4-g128.pt" # "llama-2-7b-chat-w4-g128.pt" # 
 
+torch.set_num_threads(8)
 def quantize_model():
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name)
