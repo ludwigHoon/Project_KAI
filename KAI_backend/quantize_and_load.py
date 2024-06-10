@@ -62,5 +62,4 @@ def run_model():
             m.device = "aie"
             m.quantize_weights()
 
-    prompt = "Translate the following English sentence to French: 'Hello, how are you?'"
     return(model, tokenizer)
