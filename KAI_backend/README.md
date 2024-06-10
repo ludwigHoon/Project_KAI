@@ -15,3 +15,20 @@
     pip install ops\cpp --force-reinstall
     ```
 5. Start the background service with: `python -m uvicorn main:app` (available at: 127.0.0.1:8000)
+
+Test codes:
+```python
+import requests
+
+url = f"http://127.0.0.1:8000/chat/"
+with requests.post(url, json = {"prompt": "What is AMD?"}, stream=True) as r:
+    for chunk in r.iter_content(1024):
+        print(chunk)
+
+messages = [{"role": "system", "content": "You're a chatbot designed to run on AMD AI processor"},
+    {"role":"user", "content": "What is AMD?"}]
+with requests.post(url, json = {"prompt": messages}, stream=True) as r:
+    for chunk in r.iter_content(1024):
+        print(chunk)
+
+```
