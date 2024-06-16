@@ -44,7 +44,7 @@ def search_and_add_to_db(search_term: str, progress=tqdm):
     for event in events:
         name, note, meta = Google_api_services.construct_event_metadata(event)
         print(name, note, meta)
-        meta['doc_id'] = msg['start']
+        meta['doc_id'] = event['start']
         datum = (
             f'# Event name:\n{name}\n\n# Details:\n{note}')
         add_chunk_text_to_db_with_meta(datum, meta)

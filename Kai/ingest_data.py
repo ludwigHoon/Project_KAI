@@ -1,13 +1,16 @@
 import sys
 
 import chromadb
+from chromadb.utils import embedding_functions
 import tiktoken
 from loguru import logger
+from sentence_transformers import SentenceTransformer
 
 from .setting import PERSISTANT_PATH
 
 logger.add(sys.stdout, colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
+model = SentenceTransformer('multi-qa-MiniLM-L6-cos-v1')
 client = chromadb.PersistentClient(path=PERSISTANT_PATH)
 
 def add_chunk_text_to_db_with_meta(text: str, meta: dict) -> bool:
@@ -15,18 +18,19 @@ def add_chunk_text_to_db_with_meta(text: str, meta: dict) -> bool:
     @parameter: text : str - Text to be chunked
     @parameter: meta : dict - Meta data to be stored with the text
     """
-    chunks = chunk_text(text)
+    chunks  = chunk_text(text)
     if (meta["doc_id"] is None) or (meta["doc_id"] == ""):
         logger.error("Document ID is missing")
         return(False)
 
-    collection = client.get_or_create_collection(name="KAI", metadata={"hnsw:space": "cosine"})
+    collection = client.get_or_create_collection(name="KAI", metadata={"hnsw:space": "cosine"}, embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="multi-qa-MiniLM-L6-cos-v1"))
     collection.upsert(
         documents = chunks,
-        metadatas = [meta for i in range(len(chunks))],
+        #metadatas = [meta for _ in range(len(chunks))],
         ids = [f"{meta['doc_id']}_{i}" for i in range(len(chunks))]
     )
     return(True)
+
 
 def chunk_text(text: str, units: int = 256, overlap: int = 50) -> list[str]:
     """Chunk text into smaller pieces based on units and overlap
@@ -37,9 +41,13 @@ def chunk_text(text: str, units: int = 256, overlap: int = 50) -> list[str]:
     """
     encoding = tiktoken.encoding_for_model("gpt-4")
     encoded_tokens = encoding.encode(text, disallowed_special=())
+
     chunks = []
+    chunks_embedding = []
 
     if units > len(encoded_tokens) or units < 1:
+        #embedding = model.encode(text, output_value="token_embeddings").tolist()  # Convert to list if needed
+    
         return([text])
 
     if overlap >= units:
@@ -56,8 +64,12 @@ def chunk_text(text: str, units: int = 256, overlap: int = 50) -> list[str]:
 
         chunk_tokens = encoded_tokens[start_i:end_i]
         chunk_text = encoding.decode(chunk_tokens)
-
+        
+        #chunk_embedding = model.encode(chunk_text, output_value="sentence_embedding").tolist()  # Convert to list if neede
+                
         chunks.append(chunk_text)
+        #chunks_embedding.append(chunk_embedding)
         i += units - overlap
+    #return(chunks, chunks_embedding)
     return(chunks)
 

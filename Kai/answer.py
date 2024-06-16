@@ -6,11 +6,12 @@ os.environ['HF_HOME'] = './hf'
 
 def format_prompt_for_llama2chat(
     question,
-    context="",
+    context="", # info query froom DB
     history="",
     system_prompt="You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information. Do not use information not provided in context.",
 ):
-    prompt = f"Question: {question}"
+    full_prompt = [{"role": "system", "content": "You're a chatbot designed to run on AMD AI processor"}]
+    context_string = ""
     if context != "":
         prompt += f"\n\nContext: {context}"
     if history != "":
@@ -20,6 +21,13 @@ def format_prompt_for_llama2chat(
 <</SYS>>
 {prompt}[/INST]
 """
+
+    # edit so that instead of the stupid string, return: [{"role": "system", "content": "You're a chatbot designed to run on AMD AI processor"},
+    # {"role":"user", "content": "What is AMD?
+    # context: "},
+    # {"role": "assistant", "content": "......."}, ......  <- must end of {"role": "user", "content" : "....."}]
+    
+
     return full_prompt
 
 
@@ -39,6 +47,10 @@ def query_db_for_context(question, n_results=5, max_distance = 0.5): #using cosi
 
 
 def generate_response_amd(prompt: str):
+    # pass the prompt to API: url = f"http://127.0.0.1:8000/chat/"
+    # something like:
+    # with requests.post(url, json = {"prompt": "What is AMD?"}, stream=True) as r:
+    # get response from streaming and push chunks of response to GUI.
     from threading import Thread
 
     from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer  # To change

@@ -1,4 +1,4 @@
-SET AMD_DIR=C:\Users\kai\RyzenAI-SW\example\transformers
+SET AMD_DIR=C:\github\RyzenAI-SW\example\transformers
 SET PWD=%~dp0
 
 mklink /D %PWD%third_party %AMD_DIR%\third_party

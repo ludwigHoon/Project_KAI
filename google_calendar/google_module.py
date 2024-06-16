@@ -139,7 +139,7 @@ class Google_api:
             for attendee in event.get("attendees"):
                 #if not attendee.get('self'):
                 email = attendee.get('email')
-                res, details = a.Get_attendee_name(email)
+                res, details = self.Get_attendee_name(email)
                 if res:
                     print(details.get("names"))
                     person = details.get("names")[0].get("displayName")  + "<"+email+">"
