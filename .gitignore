@@ -11,6 +11,7 @@ KAI_backend/ext
 KAI_backend/onnx-ops
 KAI_backend/ops
 KAI_backend/dll
+KAI_backend/ryzen-ai-sw-1.1
 
 google_calendar/token.json
 google_calendar/sample_contact.json

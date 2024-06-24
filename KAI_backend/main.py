@@ -66,3 +66,4 @@ async def chat(c_request: ChatRequest):
     print(formatted_prompt)
     return StreamingResponse(
         generate_response(formatted_prompt, max_new_tokens, do_sample, ), media_type="text/plain")
+
