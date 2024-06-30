@@ -13,6 +13,24 @@ def fetch_unread_emails():
 
     # Query for unread emails
     #cursor.execute("SELECT * FROM messages WHERE unread = 1 ORDER BY date DESC LIMIT 10")
+    """
+    SELECT 
+	messages.date,
+	messagesText_content.*, 
+           strftime('%Y-%m-%d, %H:%M', 
+                    DATETIME(messages.date/1000000, 
+                    "unixepoch", "localtime")) AS `Datetime`,
+			"thunderlink://" || messages.headerMessageID AS `ThunderLink`,
+           messages.folderID,
+           messages.messageKey
+    FROM messagesText_content
+    JOIN messages ON messages.id=messagesText_content.docid
+    WHERE (messagesText_content.c3author NOT LIKE "%daemon%"
+    OR messagesText_content.c3author NOT LIKE "%DAEMON%")
+	AND messages.date > 1719712783000000
+    ORDER BY messages.date DESC
+    """
+    
     now = datetime.datetime.utcnow()
 
     # Calculate 24 hours ago
@@ -20,7 +38,8 @@ def fetch_unread_emails():
 
     # Convert datetime to microseconds since epoch
     timestamp_micro = int(twenty_four_hours_ago.timestamp() * 1000000)
-    cursor.execute("select * from messages where date > "+str(timestamp_micro))
+    # cursor.execute("select * from messages where date > "+str(timestamp_micro))
+    cursor.execute("select * from messagesText")
     emails = cursor.fetchall()
 
     conn.close()

@@ -21,13 +21,14 @@ Test codes:
 import requests
 
 url = f"http://127.0.0.1:8000/chat/"
-with requests.post(url, json = {"prompt": "What is AMD?"}, stream=True) as r:
+with requests.post(url, json = {"prompt": "What is AMD in Semiconductor industry?"}, stream=True) as r:
     for chunk in r.iter_content(1024):
         print(chunk)
 
 messages = [{"role": "system", "content": "You're a chatbot designed to run on AMD AI processor"},
-    {"role":"user", "content": "What is AMD?"}]
-with requests.post(url, json = {"prompt": messages}, stream=True) as r:
+    {"role":"user", "content": "What is AMD?"},
+    {"role":"assistant", "content":"<CONTEXT HERE>"}]
+with requests.post(url, json = {"prompt": messages, "max_new_tokens":100}, stream=True) as r:
     for chunk in r.iter_content(1024):
         print(chunk)
 
