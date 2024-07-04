@@ -28,7 +28,7 @@ with requests.post(url, json = {"prompt": "What is AMD in Semiconductor industry
 messages = [{"role": "system", "content": "You're a chatbot designed to run on AMD AI processor"},
     {"role":"user", "content": "What is AMD?"},
     {"role":"assistant", "content":"<CONTEXT HERE>"}]
-with requests.post(url, json = {"prompt": messages, "max_new_tokens":100}, stream=True) as r:
+with requests.post(url, json = {"prompt": messages, "max_new_tokens":50}, stream=True) as r:
     for chunk in r.iter_content(1024):
         print(chunk)
 
