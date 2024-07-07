@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-import wikipedia
+#import wikipedia
 from tqdm import tqdm
 
 from google_calendar.google_module import Google_api
@@ -12,7 +12,7 @@ from .ingest_data import add_chunk_text_to_db_with_meta
 
 def search_and_add_to_db(search_term: str, progress=tqdm):
     page_ids = []
-    query = wikipedia.search(search_term)
+    # query = wikipedia.search(search_term)
 
     # for page in query:
     #     try:
@@ -36,27 +36,28 @@ def search_and_add_to_db(search_term: str, progress=tqdm):
     #     meta["doc_id"] = f"wiki_{meta['url'].split('/')[-1]}"
     #     add_chunk_text_to_db_with_meta(datum, meta)
 
-    Google_api_services = Google_api()
-    Google_api_services.Get_Calender()
-    events_result = Google_api_services.Get_today_events()
+    # Google_api_services = Google_api()
+    # Google_api_services.Get_Calender()
+    # events_result = Google_api_services.Get_today_events()
 
-    events = events_result.get("items", [])
-    for event in events:
-        name, note, meta = Google_api_services.construct_event_metadata(event)
-        print(name, note, meta)
-        meta['doc_id'] = event['start']
-        datum = (
-            f'# Event name:\n{name}\n\n# Details:\n{note}')
-        add_chunk_text_to_db_with_meta(datum, meta)
+    # events = events_result.get("items", [])
+    # for event in events:
+    #     name, note, meta = Google_api_services.construct_event_metadata(event)
+    #     print(name, note, meta)
+    #     meta['doc_id'] = event['start']
+    #     datum = (
+    #         f'# Event name:\n{name}\n\n# Details:\n{note}')
+    #     add_chunk_text_to_db_with_meta(datum, meta)
 
         
-    msgs = Google_api_services.get_unread_emails()
-    for msg in msgs:
-        datum = (
-            f'# email subject:\n{msg["subject"]}\n\n# email content:\n{msg["content"]}')
-        meta = dict()
-        meta['date'] = msg['date']
-        meta['doc_id'] = msg['date']
-        print(meta,datum)
-        add_chunk_text_to_db_with_meta(datum, meta)
+    # msgs = Google_api_services.get_unread_emails()
+    # for msg in msgs:
+    #     datum = (
+    #         f'# email subject:\n{msg["subject"]}\n\n# email content:\n{msg["content"]}')
+    #     meta = dict()
+    #     meta['date'] = msg['date']
+    #     meta['doc_id'] = msg['date']
+    #     print(meta,datum)
+    #     add_chunk_text_to_db_with_meta(datum, meta)
+        
         

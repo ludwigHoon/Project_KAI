@@ -1,5 +1,7 @@
 import loguru
 from .ingest_data import client
+from chromadb.utils import embedding_functions
+
 
 import os
 os.environ['HF_HOME'] = './hf'
@@ -32,17 +34,19 @@ def format_prompt_for_llama2chat(
 
 
 def query_db_for_context(question, n_results=5, max_distance = 0.5): #using cosine, score range from 0 - 1 (higher score = less semantically similar)
-    collection = client.get_or_create_collection(name="KAI")
+    collection = client.get_or_create_collection(name="KAI", metadata={"hnsw:space": "cosine"}, embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="multi-qa-MiniLM-L6-cos-v1"))
     context = collection.query(
         query_texts=question,
         n_results=n_results,
         include=["documents", "distances", "metadatas"]
     )
-    # Filtering documents with a score less than min_score
+    #Filtering documents with a score less than min_score
     filtered_pos = [i for i in range(len(context["distances"][0]))
                     if context["distances"][0][i] <= max_distance]
+    print(context)
     docs = [context["documents"][0][i] for i in filtered_pos]
     context_text = "\n\n".join(docs)
+    print(docs)
     return context_text
 
 

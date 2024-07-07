@@ -14,6 +14,6 @@ echo Running with administrative privileges
 
 :: Example command that requires admin access
 conda env update -f .\KAI_backend\env.yaml --prune
-
+cd KAI_backend && pip install ops\cpp --force-reinstall
 :: End of script
 pause

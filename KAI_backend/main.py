@@ -48,6 +48,7 @@ def generate_response(formatted_prompt: str, max_new_tokens: int = 1000, do_samp
         if not lstrip_once:
             partial_text = partial_text.lstrip()
             lstrip_once = True
+        print(partial_text)
         yield partial_text
 
 @app.post("/chat/")
@@ -65,5 +66,5 @@ async def chat(c_request: ChatRequest):
         formatted_prompt += "<|start_header_id|>assistant<|end_header_id|>"
     print(formatted_prompt)
     return StreamingResponse(
-        generate_response(formatted_prompt, max_new_tokens, do_sample, ), media_type="text/plain")
+        generate_response(formatted_prompt, max_new_tokens, do_sample, temperature=temperature, top_p=top_p), media_type="text/plain")
 
