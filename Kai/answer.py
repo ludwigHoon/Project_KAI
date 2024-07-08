@@ -46,8 +46,11 @@ def query_db_for_context(question, n_results=5, max_distance = 0.5): #using cosi
     print(context)
     docs = [context["documents"][0][i] for i in filtered_pos]
     context_text = "\n\n".join(docs)
-    print(docs)
-    return context_text
+    context_subject = [context["metadatas"][0][i]["subject"] for i in filtered_pos]
+    context_links = [context["metadatas"][0][i]["thunderlink"] for i in filtered_pos]
+    print(f"Context text: {context_text}")
+    print(f"\nContext subject and Link: {context_subject}\n\n {context_links}\n\n")
+    return context_text, context_subject, context_links
 
 
 def generate_response_amd(prompt: str):

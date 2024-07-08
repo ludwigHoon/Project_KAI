@@ -39,7 +39,8 @@ class Processed_Email:
             'datetime' : self.datetime,
             'thunderlink':self.thunderlink,
             'folderId':self.folderId,
-            'messageKey':self.messageKey
+            'messageKey':self.messageKey,
+            'subject': "[Email] " + self.subject
         }
         return meta_dict
     
@@ -79,7 +80,8 @@ class Processed_event:
             'start_time_micro': self.start_time_micro,
             'end_time_micro':self.end_time_micro,
             'start_time': self.start_time.strftime("%Y-%m-%d, %H:%M"),
-            'end_time': self.end_time.strftime("%Y-%m-%d, %H:%M")
+            'end_time': self.end_time.strftime("%Y-%m-%d, %H:%M"),
+            'subject': "[Calendar] "+self.start_time.strftime("%Y-%m-%d, %H:%M") + " " + self.event_name
         }
         return meta_dict
     

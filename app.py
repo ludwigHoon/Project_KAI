@@ -1,11 +1,13 @@
 import gradio as gr
 import requests
+import tiktoken
 
 from Kai.answer import format_prompt_for_llama2chat, generate_response_amd, query_db_for_context
 from Kai.ingest_data import add_chunk_text_to_db_with_meta
 from thunderbird.query_sql_db import get_calander_obj, get_emails_obj
 
 url = f"http://127.0.0.1:8000/chat/"
+encoding = tiktoken.encoding_for_model("gpt-4")
 
 # def respond(message, chat_history, query_db):
 #     if chat_history == []:
@@ -44,21 +46,37 @@ def respond(message, chat_history, query_db):
     print(chat_history)
     print("\n=======Chat History END=======\n")
 
+    # Append chat history into new prompt for LLM as reference
     formatted_prompt = chat_history_to_prompt(chat_history)
     if query_db:
+        #Query similar context found in ChromaDB (Emails and calender events)
         print("====> Querying DB :D")
-        context = query_db_for_context(message)
+        context, context_subjects, context_links = query_db_for_context(message)
     else:
         context = ""
     messages = formatted_prompt + [{"role": "user", "content": message}]
     if context != "":
+        #send context to LLM for emails/calender info related response
         messages.append({"role": "context", "content": context})
     
     print(messages)
     partialText = ""
-    contextURL = "thunderlink://445038946.55474213.1720231464173@sjmktmail-batch1f.marketo.org"
-    contextURL = f"\n External Reference: <a href=\"{contextURL}\" target=\"_blank\">Visit W3Schools!</a>"
-    with requests.post(url, json = {"prompt": messages, "max_new_tokens":50}, stream=True) as r:
+    contextURL =""
+    if len(context_subjects) >0:
+        contextURL = f"\n External Reference:"
+        for i in range(len(context_subjects)):
+            contextURL += f"\n\t- <a href=\"{context_links[i]}\" target=\"_blank\">{context_subjects[i]}</a>"
+    #Acquire output token size dynamically based on input length
+    encoded_tokens = encoding.encode(message, disallowed_special=())
+    total_token_limit = 500
+    # Calculate the remaining tokens available for the response
+    input_length = len(encoded_tokens)
+    max_output_tokens = total_token_limit - input_length
+    max_output_tokens = min(max_output_tokens, total_token_limit) 
+    print(f"Output Token size: {max_output_tokens}, input size: {input_length}")
+    
+    #sending POST request to backend to get LLAMA3 model responses
+    with requests.post(url, json = {"prompt": messages, "max_new_tokens":max_output_tokens}, stream=True) as r:
         for chunk in r.iter_content(1024):
             partialText = chunk.decode('utf-8')
             yield partialText + contextURL
@@ -84,7 +102,7 @@ demo = gr.ChatInterface(respond,
     additional_inputs = [
         gr.Checkbox(label="Query vector DB", value=True)]).queue()
 
-demo.launch()
+demo.launch(inline=True)
 
 # import random
 # import gradio as gr
