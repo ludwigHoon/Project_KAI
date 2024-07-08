@@ -81,7 +81,8 @@ class Processed_event:
             'end_time_micro':self.end_time_micro,
             'start_time': self.start_time.strftime("%Y-%m-%d, %H:%M"),
             'end_time': self.end_time.strftime("%Y-%m-%d, %H:%M"),
-            'subject': "[Calendar] "+self.start_time.strftime("%Y-%m-%d, %H:%M") + " " + self.event_name
+            'subject': "[Calendar] "+self.start_time.strftime("%Y-%m-%d, %H:%M") + " " + self.event_name,
+            'thunderlink':""
         }
         return meta_dict
     

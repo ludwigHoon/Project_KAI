@@ -65,7 +65,10 @@ def respond(message, chat_history, query_db):
     if len(context_subjects) >0:
         contextURL = f"\n External Reference:"
         for i in range(len(context_subjects)):
-            contextURL += f"\n\t- <a href=\"{context_links[i]}\" target=\"_blank\">{context_subjects[i]}</a>"
+            if context_links[i] == "":
+                contextURL += f"\n\t- {context_subjects[i]}"
+            else:
+                contextURL += f"\n\t- <a href=\"{context_links[i]}\" target=\"_blank\">{context_subjects[i]}</a>"
     #Acquire output token size dynamically based on input length
     encoded_tokens = encoding.encode(message, disallowed_special=())
     total_token_limit = 500

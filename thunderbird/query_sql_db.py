@@ -101,7 +101,7 @@ def fetch_calendar_events(calendar_db:str):
     cursor = conn.cursor()
 
     # Get today's date
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.combine(datetime.datetime.today(), datetime.datetime.min.time())
     # Calculate 24 hours ago
     twenty_four_hours_next = now + datetime.timedelta(hours=24)
     # Convert datetime to microseconds since epoch
