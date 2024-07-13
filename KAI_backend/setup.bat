@@ -21,4 +21,4 @@ set XRT_PATH=%THIRD_PARTY%\xrt-ipu
 
 set TARGET_DESIGN=
 set DEVICE=phx
-set XLNX_VART_FIRMWARE=%PWD%/xclbin/phx
+set XLNX_VART_FIRMWARE=%PWD%/xclbin/phx/1x4.xclbin

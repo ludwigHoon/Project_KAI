@@ -13,5 +13,13 @@ KAI_backend/ops
 KAI_backend/dll
 KAI_backend/ryzen-ai-sw-1.1
 
+KAI_frontend_app/onnxruntime
+KAI_frontend_app/optimum
+KAI_frontend_app/optimum-amd
+KAI_frontend_app/ryzen-ai-sw-1.1
+KAI_frontend_app/voe-4.0-win_amd64
+KAI_frontend_app/ryzen_ai_python_packages
+
+
 google_calendar/token.json
 google_calendar/sample_contact.json

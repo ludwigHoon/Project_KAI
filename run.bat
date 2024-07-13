@@ -37,6 +37,13 @@ IF "%ENV_EXIST%" == "" (
     call setup.bat
     call pip install --force-reinstall huggingface-hub==0.23.4
     call pip install ops\cpp --force-reinstall
+    @REM cd ryzen-ai-sw-1.1\ryzen-ai-sw-1.1
+    @REM call pip install vai_q_onnx-1.16.0+69bc4f2-py2.py3-none-any.whl
+    @REM call pip install onnxruntime
+    @REM cd ryzen-ai-sw-1.1\ryzen-ai-sw-1.1\voe-4.0-win_amd64
+    @REM pip install voe-0.1.0-cp39-cp39-win_amd64.whl
+    @REM pip install onnxruntime_vitisai-1.15.1-cp39-cp39-win_amd64.whl
+    @REM python installer.py
     cd ..
 ) else (
     echo Activating the existing environment: %ENV_NAME%
@@ -47,11 +54,11 @@ IF "%ENV_EXIST%" == "" (
 cd ./KAI_backend
 :: "ckpt" folder used to store Quantized model
 mkdir ckpt
-@REM python -m uvicorn main:app
-@echo "Starting LLM backend..." 
-start /b python -m uvicorn main:app
-cd ..
-@echo "Starting Gradio Chatbot..." 
-start /b python app.py
-@REM Reset back to starting dir
+@REM @REM python -m uvicorn main:app
+@REM @echo "Starting LLM backend..." 
+@REM start /b python -m uvicorn main:app
+@REM cd ..
+@REM @echo "Starting Gradio Chatbot..." 
+@REM start /b python app.py
+@REM @REM Reset back to starting dir
 popd
