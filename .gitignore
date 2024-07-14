@@ -19,7 +19,12 @@ KAI_frontend_app/optimum-amd
 KAI_frontend_app/ryzen-ai-sw-1.1
 KAI_frontend_app/voe-4.0-win_amd64
 KAI_frontend_app/ryzen_ai_python_packages
+KAI_frontend_app/models
 
 
 google_calendar/token.json
 google_calendar/sample_contact.json
+KAI_backend/ryzen_ai_python_packages/onnxruntime_vitisai-1.15.1-cp39-cp39-win_amd64.whl
+KAI_backend/ryzen_ai_python_packages/vai_q_onnx-1.16.0+69bc4f2-py2.py3-none-any.whl
+KAI_backend/ryzen_ai_python_packages/voe-0.1.0-cp39-cp39-win_amd64.whl
+KAI_frontend_app/test_gradio_iframe copy.html

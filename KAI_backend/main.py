@@ -1,3 +1,5 @@
+import base64
+from io import BytesIO
 import quantize_and_load as ql
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
@@ -8,8 +10,29 @@ from torchvision import transforms
 import numpy as np
 from pydantic import BaseModel
 from typing import Union
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(port = 8000)
+# Configure CORS
+origins = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000", 
+    "http://localhost:8000",
+    "http://127.0.0.1:8000/feeling",
+    "http://127.0.0.1:8000/feeling/",
+    "*"
+    # Add more origins if needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 
 class ChatRequest(BaseModel):
     prompt: Union[str, list]
@@ -19,9 +42,6 @@ class ChatRequest(BaseModel):
     top_p: Union[float, None] = 0.9
 
 model, tokenizer = ql.run_model()
-#from transformers import AutoModelForCausalLM, AutoTokenizer
-#model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
-#tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 terminators = [
     tokenizer.eos_token_id,
@@ -34,9 +54,9 @@ def load_img_onnx_model():
     from huggingface_hub import hf_hub_download
     feature_extractor = AutoFeatureExtractor.from_pretrained(img_model)
     session = ort.InferenceSession(
-        hf_hub_download(repo_id=img_model, filename="models/model_fp16.onnx"),
+        hf_hub_download(repo_id=img_model, filename="onnx/model_fp16.onnx"),
         providers=["VitisAIExecutionProvider"],
-        provider_options=[{"config_file":".\\voe-4.0-win_amd64\\vaip_config.json"}])
+        provider_options=[{"config_file":".\\vaip_config.json"}])
     return session, feature_extractor
 
 img_session, extractor = load_img_onnx_model()
@@ -86,7 +106,7 @@ async def chat(c_request: ChatRequest):
 
 @app.post("/feeling/")
 async def feeling_from_image(snapimg: UploadFile):
-    return predict_from_image(snapimg.file)
+    return {"emotion":predict_from_image(snapimg.file)}
 
 def predict_from_image(img):
     image = Image.open(img).convert('RGB')

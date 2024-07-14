@@ -54,11 +54,16 @@ IF "%ENV_EXIST%" == "" (
 cd ./KAI_backend
 :: "ckpt" folder used to store Quantized model
 mkdir ckpt
-@REM @REM python -m uvicorn main:app
-@REM @echo "Starting LLM backend..." 
-@REM start /b python -m uvicorn main:app
-@REM cd ..
-@REM @echo "Starting Gradio Chatbot..." 
-@REM start /b python app.py
-@REM @REM Reset back to starting dir
+@REM python -m uvicorn main:app /b
+@echo "Starting LLM backend..." 
+start "LLM-service" call python -m uvicorn main:app --reload
+cd ..
+@echo "Starting Gradio Chatbot..." 
+start "Gradio-Chat-service" call python app.py
+@REM Reset back to starting dir
 popd
+pause
+@echo "Exiting Services..." 
+taskkill /fi "WindowTitle eq LLM-service"
+taskkill /fi "WindowTitle eq Gradio-Chat-service"
+exit

@@ -1,53 +1,82 @@
 <!DOCTYPE html>
+<meta name="referrer" content="no-referrer-when-downgrade">
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gradio Chart Interface</title>
 </head>
+
 <body>
     <script>
-          function dataURLtoFile(dataurl, filename) {
+        function dataURLtoFile(dataurl, filename) {
             var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-            while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
             }
-        return new File([u8arr], filename, {type:mime});
+            return new File([u8arr], filename, { type: mime });
         }
+
+        const fetchData = async (canvas) => {
+            try {
+                let formData = new FormData();
+                let url = 'http://127.0.0.1:8000/feeling/'
+                const file = await canvas.toBlob(async(Blob) => {
+                    // Append the image file to the FormData object with the correct field name
+                    formData.append('snapimg', Blob, 'canvas_image.png');
+                    console.log(formData)
+                    // formData.append('snapimg', localBlob, 'canvas_image.png');
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        // mode: 'no-cors',
+                        headers: {
+                            //'Content-Type': 'image/png',
+                            // 'Access-Control-Allow-Origin': '*',
+                            // 'Access-Control-Allow-Methods':'*'
+                        }
+                    })
+
+                    console.log('Response Data:', await response.json());
+                })
+
+                // Process responseData as needed
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
         if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
-                failed = false;
-        } else{
+            failed = false;
+        } else {
             console.log("Webcam not supported");
             failed = true;
         }
-        if (failed  == false){
-            
-            const constraints = {video: true,};
+        if (failed == false) {
+
+            const constraints = { video: true, };
             navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
                 const player = document.getElementById('player');
                 player.srcObject = stream;
                 const canvas = document.getElementById('canvas');
                 const context = canvas.getContext('2d');
                 setInterval(() => {
-                    context.drawImage(player, 0, 0, canvas.width, canvas.height);
-                    const image = canvas.toDataURL('image/png');
-                    
-                    fetch('127.0.0.1:8000/', {
-                        method: 'POST',
-                        body: dataURLtoFile(image, "snapshot.jpg"),
-                        headers: {
-                            'Content-Type': 'image/png'
-                        }
-                    });
-                }, 10000);
+                    //context.drawImage(player, 0, 0, canvas.width, canvas.height);
+                    //const image = canvas.toDataURL('image/png');
+
+                    fetchData(canvas)
+
+                }, 5000);
             });
         }
-        
+
     </script>
     <video id="player" controls autoplay></video>
     <canvas id="canvas" width="320" height="240"></canvas>
     <h1>Embedded Gradio Chart Interface</h1>
     <iframe src="http://127.0.0.1:7860" width="100%" height="500px" frameborder="0"></iframe>
 </body>
+
 </html>
