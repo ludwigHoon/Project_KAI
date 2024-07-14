@@ -6,6 +6,39 @@
     <title>Gradio Chart Interface</title>
 </head>
 <body>
+    <script>
+        if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+                failed = false;
+        } else{
+            console.log("Webcam not supported");
+            failed = true;
+        }
+        if (failed  == false){
+            
+            const constraints = {video: true,};
+            navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+                const player = document.getElementById('player');
+                player.srcObject = stream;
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                setInterval(() => {
+                    context.drawImage(player, 0, 0, canvas.width, canvas.height);
+                    const image = canvas.toDataURL('image/png');
+                    
+                    fetch('127.0.0.1:8000/', {
+                        method: 'POST',
+                        body: image,
+                        headers: {
+                            'Content-Type': 'image/png'
+                        }
+                    });
+                }, 10000);
+            });
+        }
+        
+    </script>
+    <video id="player" controls autoplay></video>
+    <canvas id="canvas" width="320" height="240"></canvas>
     <h1>Embedded Gradio Chart Interface</h1>
     <iframe src="http://127.0.0.1:7860" width="100%" height="500px" frameborder="0"></iframe>
 </body>

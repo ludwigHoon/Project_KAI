@@ -105,7 +105,7 @@ demo = gr.ChatInterface(respond,
     additional_inputs = [
         gr.Checkbox(label="Query vector DB", value=True)]).queue()
 
-demo.launch(inline=True)
+demo.launch(inline=True, port=7860)
 
 # import random
 # import gradio as gr
