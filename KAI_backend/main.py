@@ -110,8 +110,14 @@ async def feeling_from_image(snapimg: UploadFile):
 
 def predict_from_image(img):
     image = Image.open(img).convert('RGB')
+    normalize = transforms.Normalize(mean=extractor.image_mean, std=extractor.image_std)
     transform = transforms.Compose([
-        transforms.ToTensor()
+        transforms.Resize((extractor.size["height"], extractor.size["height"])),
+        transforms.RandomRotation(90),
+        transforms.RandomSharpness(2),
+        transforms.RandomHorizontalFlip(0.5),
+        transforms.ToTensor(),
+        normalize
     ])
     tensor = transform(image)
     batch_tensor = tensor.unsqueeze(0)
@@ -119,5 +125,6 @@ def predict_from_image(img):
     featured_extracted = extractor(batch_tensor)
     outputs = img_session.run(None, {'pixel_values': featured_extracted['pixel_values']})
     translated_emotions = ["sad", "disgust", "angry", "neutral", "fear", "surprise", "happy"]
-    result = [translated_emotions[np.argmin(a)] for a in outputs][0]
+    print(outputs)
+    result = [translated_emotions[np.argmax(a)] for a in outputs][0]
     return result
