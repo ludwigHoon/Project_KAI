@@ -52,8 +52,9 @@ class Processed_event:
         self.end_time_micro:int = sql_event.get("event_end",-1)
         self.start_time:dt = self.convert_ms_to_datetime(self.start_time_micro)
         self.end_time:dt = self.convert_ms_to_datetime(self.end_time_micro)
-        self.event_name:str = self.sanitize_text(sql_event.get("title",""))
-    
+        self.event_name:str = self.sanitize_text(sql_event.get("title","")) + " start on " + self.start_time.strftime("%Y-%m-%d, %H:%M") + " and end on "+self.end_time.strftime("%Y-%m-%d, %H:%M")
+        self.event_description:str = self.sanitize_text(sql_event.get("description",""))
+
     def convert_ms_to_datetime(self,timestamp_microseconds:int):
         timestamp_seconds = timestamp_microseconds / 1_000_000
 
@@ -71,7 +72,7 @@ class Processed_event:
         return text
 
     def get_content(self) ->str:
-        return self.event_name
+        return self.event_name + " Description: " + self.event_description
     
     def get_meta(self)->dict:
         # Define a dictionary with key-value pairs

@@ -28,3 +28,5 @@ KAI_backend/ryzen_ai_python_packages/onnxruntime_vitisai-1.15.1-cp39-cp39-win_am
 KAI_backend/ryzen_ai_python_packages/vai_q_onnx-1.16.0+69bc4f2-py2.py3-none-any.whl
 KAI_backend/ryzen_ai_python_packages/voe-0.1.0-cp39-cp39-win_amd64.whl
 KAI_frontend_app/test_gradio_iframe copy.html
+KAI_frontend_app/test_image/photo_6116424740135618844_y.jpg
+KAI_frontend_app/test_image/photo_6116424740135618856_y.jpg

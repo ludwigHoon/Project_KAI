@@ -9,7 +9,19 @@
 </head>
 
 <body>
+    <video id="player" controls autoplay></video>
+    <!-- <canvas id="canvas" width="320" height="240"></canvas> -->
+    <canvas id="canvas" width="680" height="480"></canvas>
+
+    <h1>Embedded Gradio Chart Interface</h1>
+    <iframe src="http://127.0.0.1:7860" width="100%" height="500px" frameborder="0"></iframe>
+
     <script>
+        const video = document.getElementById('player');
+        const canvas = document.getElementById('canvas');
+        const url = 'http://127.0.0.1:8000/feeling/'
+        let rest_score = 0
+
         function dataURLtoFile(dataurl, filename) {
             var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -19,33 +31,35 @@
             return new File([u8arr], filename, { type: mime });
         }
 
-        const fetchData = async (canvas) => {
-            try {
-                let formData = new FormData();
-                let url = 'http://127.0.0.1:8000/feeling/'
-                const file = await canvas.toBlob(async(Blob) => {
-                    // Append the image file to the FormData object with the correct field name
-                    formData.append('snapimg', Blob, 'canvas_image.png');
-                    console.log(formData)
-                    // formData.append('snapimg', localBlob, 'canvas_image.png');
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        body: formData,
-                        // mode: 'no-cors',
-                        headers: {
-                            //'Content-Type': 'image/png',
-                            // 'Access-Control-Allow-Origin': '*',
-                            // 'Access-Control-Allow-Methods':'*'
-                        }
-                    })
+        // a function that send a snapshot from webcam and send to backend facial recognition model for facial expression recognition
+        const fetchData2 = async () => {
+            // Draw the current frame from the video element onto the canvas
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Convert the canvas image to a blob and send it as FormData
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('snapimg', blob, 'snapshot.png');
 
-                    console.log('Response Data:', await response.json());
+                // Send the form data using fetch
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
                 })
-
-                // Process responseData as needed
-            } catch (error) {
-                console.error('Error:', error);
-            }
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Success:', data);
+                        if(data['emotion'] == "angry" || data['emotion'] == "sad" || data['emotion'] == "fear"  ){
+                            rest_score -=1
+                        } else{
+                            rest_score +=1
+                        }
+                        console.log(rest_score)
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            }, 'image/png');
         };
 
         if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
@@ -58,25 +72,19 @@
 
             const constraints = { video: true, };
             navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                const player = document.getElementById('player');
+                // const player = document.getElementById('player');
                 player.srcObject = stream;
-                const canvas = document.getElementById('canvas');
+                player.play();
+                // const canvas = document.getElementById('canvas');
                 const context = canvas.getContext('2d');
                 setInterval(() => {
-                    //context.drawImage(player, 0, 0, canvas.width, canvas.height);
-                    //const image = canvas.toDataURL('image/png');
-
-                    fetchData(canvas)
+                    fetchData2()
 
                 }, 5000);
             });
         }
 
     </script>
-    <video id="player" controls autoplay></video>
-    <canvas id="canvas" width="320" height="240"></canvas>
-    <h1>Embedded Gradio Chart Interface</h1>
-    <iframe src="http://127.0.0.1:7860" width="100%" height="500px" frameborder="0"></iframe>
 </body>
 
 </html>

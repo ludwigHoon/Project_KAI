@@ -107,16 +107,37 @@ def fetch_calendar_events(calendar_db:str):
     # Convert datetime to microseconds since epoch
     timestamp_micro_now = int(now.timestamp() * 1000000)
     timestamp_micro = int(twenty_four_hours_next.timestamp() * 1000000)
-    SQL_email ="""SELECT 
-    cal_id,
-	event_start,
-    event_end,
-	title
-    FROM cal_events
-    WHERE event_start > """+str(timestamp_micro_now)+"""
-	AND event_start < """+str(timestamp_micro)+"""
-    ORDER BY event_start DESC
+    # SQL_email ="""SELECT 
+    # cal_id,
+	# event_start,
+    # event_end,
+	# title
+    # FROM cal_events
+    # WHERE event_start > """+str(timestamp_micro_now)+"""
+	# AND event_start < """+str(timestamp_micro)+"""
+    # ORDER BY event_start DESC
+    # """
+    SQL_email="""
+    SELECT
+        e.cal_id,
+        e.id,
+        e.event_start,
+        e.event_end,
+        e.title,
+        p.value AS description
+    FROM
+        cal_events e
+    JOIN
+        cal_properties p
+    ON
+        e.id = p.item_id
+    WHERE
+        p.key = 'DESCRIPTION'
+        AND e.event_start > 1721404800000000
+        AND e.event_start <   1721591200000000
+    ORDER BY e.event_start DESC
     """
+    print(timestamp_micro_now, timestamp_micro)
     cursor.execute(SQL_email)
     events = cursor.fetchall()
     
