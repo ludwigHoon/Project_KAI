@@ -11,6 +11,7 @@ import numpy as np
 from pydantic import BaseModel
 from typing import Union
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import FileResponse
 
 app = FastAPI(port = 8000)
 # Configure CORS
@@ -103,6 +104,11 @@ async def chat(c_request: ChatRequest):
     print(formatted_prompt)
     return StreamingResponse(
         generate_response(formatted_prompt, max_new_tokens, do_sample, temperature=temperature, top_p=top_p), media_type="text/plain")
+
+@app.get("/")
+def return_home():
+    return FileResponse("../KAI_frontend_app/test_gradio_iframe.html")
+
 
 @app.post("/feeling/")
 def feeling_from_image(snapimg: UploadFile):

@@ -9,6 +9,33 @@
 </head>
 
 <body>
+    <button id="enable" onclick="askNotificationPermission()">Let AI tells me when to rest</button>
+    <script>
+        Notification.requestPermission().then((permission)=>{
+            if(permission === 'granted'){
+                document.querySelector("#enable").disabled = true;
+                document.querySelector("#enable").text = "permission granted";
+            }
+        });
+        function askNotificationPermission() {
+            // Check if the browser supports notifications
+            if (!("Notification" in window)) {
+            console.log("This browser does not support notifications.");
+            return;
+            }
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    console.log("Notification permission granted.");
+                    // set the button to shown or hidden, depending on what the user answers
+                    document.querySelector("#enable").disabled = true;
+                    document.querySelector("#enable").text = "permission granted";
+                } else {
+                    alert("User declined the request for notifications.");
+                }
+        
+        });
+        }
+    </script>
     <video id="player" controls autoplay></video>
     <!-- <canvas id="canvas" width="320" height="240"></canvas> -->
     <canvas id="canvas" width="680" height="480"></canvas>
@@ -31,6 +58,15 @@
             return new File([u8arr], filename, { type: mime });
         }
 
+        function notify_or_not(){
+            if(rest_score <= -5){
+                rest_score = 0
+                var notification = new Notification('You should take a break now', {
+                    body: 'You are not feeling well, take a break now',
+                    icon: 'https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295429_960_720.png' // to-replace 
+                });
+            }
+        }
         // a function that send a snapshot from webcam and send to backend facial recognition model for facial expression recognition
         const fetchData2 = async () => {
             // Draw the current frame from the video element onto the canvas
@@ -54,7 +90,8 @@
                         } else{
                             rest_score +=1
                         }
-                        console.log(rest_score)
+                        console.log(rest_score);
+                        notify_or_not();
                     })
                     .catch((error) => {
                         console.error('Error:', error);
