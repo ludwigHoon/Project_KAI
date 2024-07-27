@@ -106,20 +106,12 @@ def fetch_calendar_events(calendar_db:str):
     twenty_four_hours_next = now + datetime.timedelta(hours=24)
     # Convert datetime to microseconds since epoch
     timestamp_micro_now = int(now.timestamp() * 1000000)
-    timestamp_micro = int(twenty_four_hours_next.timestamp() * 1000000)
+    # Add 24hrs microseconds
+    timestamp_micro_next_254hrs = int(twenty_four_hours_next.timestamp() * 1000000)
     print(now.strftime("%Y-%m-%d, %H:%M"),twenty_four_hours_next.strftime("%Y-%m-%d, %H:%M"))
-    print(timestamp_micro_now,timestamp_micro)
-    # SQL_email ="""SELECT 
-    # cal_id,
-	# event_start,
-    # event_end,
-	# title
-    # FROM cal_events
-    # WHERE event_start > """+str(timestamp_micro_now)+"""
-	# AND event_start < """+str(timestamp_micro)+"""
-    # ORDER BY event_start DESC
-    # """
-    SQL_email=f"""
+    print(timestamp_micro_now,timestamp_micro_next_254hrs)
+    #Query multiple tables of Thunderbird SQL lite DB for Calender Events from now to next 24hours
+    SQL_event=f"""
     SELECT
         e.cal_id,
         e.id,
@@ -136,11 +128,12 @@ def fetch_calendar_events(calendar_db:str):
     WHERE
         p.key = 'DESCRIPTION'
         AND e.event_start > {timestamp_micro_now}
-        AND e.event_start <   {timestamp_micro}
+        AND e.event_start <   {timestamp_micro_next_254hrs}
     ORDER BY e.event_start DESC
     """
-    print(timestamp_micro_now, timestamp_micro)
-    cursor.execute(SQL_email)
+    print(timestamp_micro_now, timestamp_micro_next_254hrs)
+    #Query from SQL lite DB with SQL command
+    cursor.execute(SQL_event)
     events = cursor.fetchall()
     
     # Get column names from the cursor
@@ -154,6 +147,7 @@ def fetch_calendar_events(calendar_db:str):
     return events_dict
 
 def convert_ms_to_datetime(timestamp_microseconds:int):
+    #Converting microsecond recorded in SQL lite DB to Python Datetime object
     timestamp_seconds = timestamp_microseconds / 1_000_000
 
     # Create a datetime object
@@ -170,6 +164,7 @@ def get_emails_obj()-> list:
             list_of_Processed_Email_objs.append(Processed_Email(email))
     return list_of_Processed_Email_objs
 
+# Main function to fetch and process calender event from now to next 24hrs
 def get_calander_obj()->list:
     list_of_Processed_event_objs =[]
     calender_db_list = get_calender_path()

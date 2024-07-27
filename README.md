@@ -48,7 +48,9 @@ Note: It may take longer loading time for the first time run
 ```
 Reminder: Please Ensure you set a valid direcotory path in Section 1.3 step 3
 ```
-To run the application: 
-```
-run.bat
-```
+1. To run the application: 
+    ```
+    run.bat
+    ```
+2. Access the chatbot and facial recognition functionality via web browser at <code>http://localhost:8000/</code>
+

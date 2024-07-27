@@ -10,6 +10,7 @@
 
 <body>
     <script>
+        //Responsible to request browser access on notification
         Notification.requestPermission().then((permission)=>{
             if(permission === 'granted'){
                 document.querySelector("#enable").disabled = true;
@@ -62,6 +63,7 @@
         function notify_or_not(){
             if(rest_score <= -5){
                 rest_score = 0
+                // if negative emotion have been prolonged than the positive mood, trigger a recommanded break notification
                 const notification = new Notification('You should take a break now', {
                     body: 'You are not feeling well, take a break now',
                     icon: 'https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295429_960_720.png' // to-replace 
@@ -89,11 +91,14 @@
                     .then(data => {
                         console.log('Success:', data);
                         if(data['emotion'] == "angry" || data['emotion'] == "sad" || data['emotion'] == "fear"  ){
+                            // if negative -1
                             rest_score -=1
                         } else{
+                            //else if positive +1 score
                             rest_score +=1
                         }
                         console.log(rest_score);
+                        //decide if rest score need a rest or not
                         notify_or_not();
                     })
                     .catch((error) => {

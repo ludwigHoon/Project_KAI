@@ -2,6 +2,7 @@ from datetime import datetime as dt
 import re
 
 class Processed_Email:
+    # this class store, derived and process infomation of an email for embeding process later
     def __init__(self, sql_email:dict) -> None:
         self.date:int = sql_email.get("date",-1)
         self.docid:int = sql_email.get("docid",-1)
@@ -25,11 +26,13 @@ class Processed_Email:
         return text
 
     def get_content(self) ->str:
+        # get email subject and its content for embeding process
         content = self.subject +" : " + self.body
         return self.sanitize_text(content)
     
     def get_meta(self)->dict:
-        # Define a dictionary with key-value pairs
+        # Define a dictionary with key-value pairs for embeding meta data
+        # if the embeding is used, the metadat will use to contstrct reference data in LLM chat response
         meta_dict = {
             'date': self.date,
             'doc_id':self.docid,
@@ -46,12 +49,14 @@ class Processed_Email:
     
     
 class Processed_event:
+    # this class store derived and process infomation of an caledner evnet for embeding process later
     def __init__(self, sql_event:dict) -> None:
         self.doc_id:str = sql_event.get("cal_id","")
         self.start_time_micro:int = sql_event.get("event_start",-1)
         self.end_time_micro:int = sql_event.get("event_end",-1)
         self.start_time:dt = self.convert_ms_to_datetime(self.start_time_micro)
         self.end_time:dt = self.convert_ms_to_datetime(self.end_time_micro)
+        # Clear start date and end date helps chromadb find the similarity by date
         self.event_name:str = self.sanitize_text(sql_event.get("title","")) + " start on " + self.start_time.strftime("%Y-%m-%d, %H:%M") + " and end on "+self.end_time.strftime("%Y-%m-%d, %H:%M")
         self.event_description:str = self.sanitize_text(sql_event.get("description",""))
 
@@ -72,10 +77,13 @@ class Processed_event:
         return text
 
     def get_content(self) ->str:
+        # get calender event name and its description for embeding process
+        # Note: if just the event name feeded to LLM  without description, LLM may cause hallucinations on the event tiself
         return self.event_name + " Description: " + self.event_description
     
     def get_meta(self)->dict:
-        # Define a dictionary with key-value pairs
+        # Define a dictionary with key-value pairs for embeding meta data
+        # if the embeding is used, the metadat will use to contstrct reference data in LLM chat response
         meta_dict = {
             'doc_id':self.doc_id,
             'start_time_micro': self.start_time_micro,
