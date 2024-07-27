@@ -1,3 +1,4 @@
+SET HF_TOKEN=<YOUR_TOKEN>
 @echo off
 @REM ENV_NAME is conda enviroment name, it should be setup once and reuse in next run
 @REM YAML_FILE is conda enviroment dependecies list
