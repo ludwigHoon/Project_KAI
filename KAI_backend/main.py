@@ -42,6 +42,7 @@ class ChatRequest(BaseModel):
     temperature: Union[float, None] = 0.7
     top_p: Union[float, None] = 0.9
 
+# load and run the llama 3 LLM model
 model, tokenizer = ql.run_model()
 
 terminators = [
@@ -51,6 +52,7 @@ terminators = [
 
 img_model = "Xenova/facial_emotions_image_detection"
 def load_img_onnx_model():
+    # load onnx quantized facial emotion model from Hunggign face
     import onnxruntime as ort
     from huggingface_hub import hf_hub_download
     feature_extractor = AutoFeatureExtractor.from_pretrained(img_model)
@@ -63,6 +65,7 @@ def load_img_onnx_model():
 img_session, extractor = load_img_onnx_model()
 
 def generate_response(formatted_prompt: str, max_new_tokens: int = 1000, do_sample: bool = True, temperature: float = 0.7, top_p: float = 0.9):
+    ## uses to response a prompt from user
     streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
     encodeds = tokenizer(
         formatted_prompt,
