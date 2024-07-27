@@ -71,7 +71,7 @@ def respond(message, chat_history, query_db):
                 contextURL += f"\n\t- <a href=\"{context_links[i]}\" target=\"_blank\">{context_subjects[i]}</a>"
     #Acquire output token size dynamically based on input length
     encoded_tokens = encoding.encode(message, disallowed_special=())
-    total_token_limit = 500
+    total_token_limit = 250
     # Calculate the remaining tokens available for the response
     input_length = len(encoded_tokens)
     max_output_tokens = total_token_limit - input_length
@@ -101,7 +101,7 @@ def store_db_data(is_thunderbird= True):
 store_db_data()
 
 demo = gr.ChatInterface(respond,
-                        chatbot=gr.Chatbot(sanitize_html=False),
+                        chatbot=gr.Chatbot(sanitize_html=False),textbox=gr.Textbox(max_lines=100),
     additional_inputs = [
         gr.Checkbox(label="Query vector DB", value=True)]).queue()
 

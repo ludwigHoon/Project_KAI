@@ -1,3 +1,0 @@
-- gradio embed into a web app (JAVAscript or whatever)
-- web app take photo and send to backend for emotional recognition
-- frontend need to send prompt to backend

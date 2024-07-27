@@ -9,7 +9,6 @@
 </head>
 
 <body>
-    <button id="enable" onclick="askNotificationPermission()">Let AI tells me when to rest</button>
     <script>
         Notification.requestPermission().then((permission)=>{
             if(permission === 'granted'){
@@ -36,12 +35,14 @@
         });
         }
     </script>
-    <video id="player" controls autoplay></video>
+    <button id="enable" onclick="askNotificationPermission()">Let AI tells me when to rest</button>
+
+    <video id="player" controls autoplay width="25%" height="25%"></video>
     <!-- <canvas id="canvas" width="320" height="240"></canvas> -->
-    <canvas id="canvas" width="680" height="480"></canvas>
+    <canvas id="canvas" width="680" height="480" hidden></canvas>
 
     <h1>Embedded Gradio Chart Interface</h1>
-    <iframe src="http://127.0.0.1:7860" width="100%" height="500px" frameborder="0"></iframe>
+    <iframe src="http://127.0.0.1:7860" width="100%" height="700px" frameborder="0"></iframe>
 
     <script>
         const video = document.getElementById('player');
@@ -61,10 +62,11 @@
         function notify_or_not(){
             if(rest_score <= -5){
                 rest_score = 0
-                var notification = new Notification('You should take a break now', {
+                const notification = new Notification('You should take a break now', {
                     body: 'You are not feeling well, take a break now',
                     icon: 'https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295429_960_720.png' // to-replace 
                 });
+                console.log("show noti")
             }
         }
         // a function that send a snapshot from webcam and send to backend facial recognition model for facial expression recognition
@@ -72,6 +74,7 @@
             // Draw the current frame from the video element onto the canvas
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // context.rotate(90 * Math.PI / 180);
             // Convert the canvas image to a blob and send it as FormData
             canvas.toBlob(blob => {
                 const formData = new FormData();
