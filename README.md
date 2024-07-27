@@ -40,3 +40,15 @@ git clone https://github.com/amd/RyzenAI-SW.git
     ```
     SET AMD_DIR=C:\github\RyzenAI-SW\example\transformers
     ```
+
+## Running the application
+```
+Note: It may take longer loading time for the first time run
+```
+```
+Reminder: Please Ensure you set a valid direcotory path in Section 1.3 step 3
+```
+To run the application: 
+```
+run.bat
+```
