@@ -37,14 +37,14 @@ IF "%ENV_EXIST%" == "" (
     call setup.bat
     call pip install --force-reinstall huggingface-hub==0.23.4
     call pip install ops\cpp --force-reinstall
-    @REM cd ryzen-ai-sw-1.1\ryzen-ai-sw-1.1
-    @REM call pip install vai_q_onnx-1.16.0+69bc4f2-py2.py3-none-any.whl
-    @REM call pip install onnxruntime
-    @REM cd ryzen-ai-sw-1.1\ryzen-ai-sw-1.1\voe-4.0-win_amd64
-    @REM pip install voe-0.1.0-cp39-cp39-win_amd64.whl
-    @REM pip install onnxruntime_vitisai-1.15.1-cp39-cp39-win_amd64.whl
-    @REM python installer.py
-    cd ..
+    cd ryzen-ai-sw-1.1
+    call pip install vai_q_onnx-1.16.0+69bc4f2-py2.py3-none-any.whl
+    call pip install onnxruntime
+    cd voe-4.0-win_amd64
+    pip install voe-0.1.0-cp39-cp39-win_amd64.whl
+    pip install onnxruntime_vitisai-1.15.1-cp39-cp39-win_amd64.whl
+    python installer.py
+    cd ../../../
 ) else (
     echo Activating the existing environment: %ENV_NAME%
     call conda activate %ENV_NAME%
